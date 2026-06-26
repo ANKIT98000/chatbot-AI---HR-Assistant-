@@ -5,7 +5,7 @@ from typing import List, Tuple, Optional
 from pypdf import PdfReader
 
 from langchain_postgres.vectorstores import PGVector
-from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace, HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace, HuggingFaceEndpointEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class ResumeAssistant:
     def __init__(self):
-        self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        self.embeddings = HuggingFaceEndpointEmbeddings(model="sentence-transformers/all-MiniLM-L6-v2")
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=100)
         
         # SUPABASE (POSTGRES) CLOUD CONNECTION
