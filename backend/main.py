@@ -2,7 +2,8 @@ import logging
 import zipfile
 import io
 from typing import List
-from fastapi import FastAPI, UploadFile, File
+# Form import karna zaroori hai
+from fastapi import FastAPI, UploadFile, File, Form
 from models import QuestionRequest, AssistantResponse, UploadResponse
 from ai_engine import ResumeAssistant
 
@@ -12,7 +13,10 @@ app = FastAPI(title="AI Resume Backend Cloud")
 ai = ResumeAssistant()
 
 @app.post("/upload/", response_model=UploadResponse)
-async def upload_files(files: List[UploadFile] = File(...)):
+async def upload_files(
+    files: List[UploadFile] = File(...),
+    job_description: str = Form("")  # Upload ke sath JD accept karne ke liye
+):
     ats_results = {}
     all_docs = []
     failed = []
@@ -26,7 +30,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
                     for z_name in z.namelist():
                         if z_name.lower().endswith(".pdf"):
                             pdf_bytes = z.read(z_name)
-                            ats_info, docs = ai.process_pdf(z_name, pdf_bytes)
+                            # process_pdf ko jd bhi pass kiya
+                            ats_info, docs = ai.process_pdf(z_name, pdf_bytes, job_description)
                             if ats_info and docs:
                                 ats_results[docs[0].metadata["name"]] = ats_info
                                 all_docs.extend(docs)
@@ -34,7 +39,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
                                 failed.append(z_name)
                                 
             elif file.filename.lower().endswith(".pdf"):
-                ats_info, docs = ai.process_pdf(file.filename, file_bytes)
+                ats_info, docs = ai.process_pdf(file.filename, file_bytes, job_description)
                 if ats_info and docs:
                     ats_results[docs[0].metadata["name"]] = ats_info 
                     all_docs.extend(docs)
@@ -54,7 +59,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
 @app.post("/ask/", response_model=AssistantResponse)
 async def ask_bot(request: QuestionRequest):
-    ans = ai.ask(request.question)
+    ans = ai.ask(request.question, request.history, request.job_description)
     return AssistantResponse(answer=ans)
 
 @app.post("/clear/")
