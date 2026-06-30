@@ -5,7 +5,7 @@ from typing import List
 
 from fastapi import FastAPI, UploadFile, File, Form
 from backend.models import QuestionRequest, AssistantResponse, UploadResponse
-from ai_engine import ResumeAssistant
+from backend.ai_engine import ResumeAssistant
 
 logging.basicConfig(level=logging.INFO)
 
