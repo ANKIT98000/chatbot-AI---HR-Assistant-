@@ -11,7 +11,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
-from config import DATABASE_URL
+from backend.config import DATABASE_URL
 
 logger = logging.getLogger(__name__)
 
