@@ -1,30 +1,19 @@
 import io
-<<<<<<< HEAD
 import os
-=======
->>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
 import logging
 import re
 from typing import List, Tuple, Optional
 from pypdf import PdfReader
 
 from langchain_postgres.vectorstores import PGVector
-<<<<<<< HEAD
 from langchain_huggingface import HuggingFaceEndpointEmbeddings  
 from langchain_google_genai import ChatGoogleGenerativeAI        
-=======
-from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace, HuggingFaceEndpointEmbeddings
->>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
-<<<<<<< HEAD
 from backend.config import DATABASE_URL
-=======
-from config import DATABASE_URL
->>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
 
 logger = logging.getLogger(__name__)
 
@@ -42,25 +31,16 @@ class ResumeAssistant:
         self._init_models()
 
     def _init_models(self):
-<<<<<<< HEAD
         self.model = ChatGoogleGenerativeAI(
             model="gemini-1.5-flash",
             temperature=0.01,
             google_api_key=os.getenv("GOOGLE_API_KEY") 
         )
-=======
-        llm = HuggingFaceEndpoint(repo_id="meta-llama/Meta-Llama-3-8B-Instruct", temperature=0.01)
-        self.model = ChatHuggingFace(llm=llm)
->>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
         parser = StrOutputParser()
 
         self.ats_chain = PromptTemplate(
             template=("""
-<<<<<<< HEAD
                 You are an expert HR AI Assistant. Your job is to screen the candidate's Resume. 
-=======
-                    You are an expert HR AI Assistant. Your job is to screen the candidate's Resume. 
->>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
                 The HR professional will only read this for 5-7 seconds. NEVER generate paragraphs. Output strictly in the template below.
                 
                 CRITICAL SCORING RULE (BE BRUTALLY HONEST): 
@@ -106,13 +86,11 @@ Candidate Resume:
         self.qa_chain = PromptTemplate(
             template=(
                 "You are an expert HR AI Assistant. Answer the user's question based ONLY on the Context, Conversation History, and Job Description (if provided) below.\n\n"
-                "CRITICAL INSTRUCTIONS:\n"
-                "1. DIRECT ANSWER ONLY: Give the final answer immediately. Do NOT output your internal reasoning.\n"
-                "2. EXPLICIT JD MATCHING (CRITICAL): If a Job Description is provided, you MUST explicitly state whether the candidate is a 'Strong Match', 'Partial Match', or 'Poor Match'. You MUST generate a 'JD Match Score' (out of 100) based strictly on how their skills align with the JD requirements. Clearly list the 'Matching Skills' and 'Missing Skills'.\n"
-                "3. PRONOUN RESOLUTION (CRITICAL): If the user query uses 'he', 'she', 'his', 'her', or 'him', you MUST scan the CONVERSATION HISTORY from top to bottom and find the candidate whose name appears at the ABSOLUTE BOTTOM / LAST in the history text. Answer ONLY for that bottom-most candidate.\n"
-                "4. ATS SCORE: Always retrieve the general ATS MATCH SCORE from the header tags in the context chunks.\n"
-                "5. LIVE RESPONSE: Extract requested details dynamically from the raw resume text inside the context chunks.\n"
-                "6. NO EXTRA TEXT: Provide exactly what the user asked for and nothing else.\n\n"
+                "INSTRUCTIONS:\n"
+                "1. BE HELPFUL & DETAILED: Provide clear and complete answers. If the user asks for candidate details (like experience, projects, ATS score), extract all of them from the context and present them nicely.\n"
+                "2. EXPLICIT JD MATCHING: If a Job Description is provided, explicitly state if the candidate is a 'Strong', 'Partial', or 'Poor' match. Calculate a 'JD Match Score' (out of 100) and list Matching/Missing skills.\n"
+                "3. CONTEXT RESOLUTION: If the user uses a pronoun ('he', 'she') or a specific name (like 'Dev', 'Ankit'), find that specific candidate's data from the Context/History and answer only for them.\n"
+                "4. NO HALLUCINATION: Only use the data provided in the Context chunks. Do not invent details.\n\n"
                 "JOB DESCRIPTION:\n{job_description}\n\n"
                 "CONVERSATION HISTORY:\n{history}\n\n"
                 "CONTEXT (Resume Text Chunks):\n{context}\n\n"
@@ -120,7 +98,6 @@ Candidate Resume:
             ),
             input_variables=['job_description', 'history', 'context', 'question']
         ) | self.model | parser
-
     def process_pdf(self, filename: str, file_bytes: bytes, job_description: str = "") -> Tuple[Optional[str], List[Document]]:
         try:
             pdf_stream = io.BytesIO(file_bytes)
@@ -141,17 +118,9 @@ Candidate Resume:
             ats_score = score_match.group(1).strip() if score_match else "N/A"
             jd_score = jd_match.group(1).strip() if jd_match else "N/A"
 
-<<<<<<< HEAD
             header = f"\n=== [CANDIDATE NAME: {candidate_name.upper()} | ATS SCORE: {ats_score} | JD MATCH: {jd_score}] ===\n"
             
             chunks = self.text_splitter.split_text(resume_text)
-=======
-            # Added JD Match Score in header for QA chain to easily reference later
-            header = f"\n=== [CANDIDATE NAME: {candidate_name.upper()} | ATS SCORE: {ats_score} | JD MATCH: {jd_score}] ===\n"
-            
-            chunks = self.text_splitter.split_text(resume_text)
-            
->>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
             docs = [Document(page_content=header + chunk, metadata={"name": candidate_name}) for chunk in chunks]
                 
             return raw_ats_info, docs

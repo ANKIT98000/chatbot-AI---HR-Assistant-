@@ -1,11 +1,7 @@
 import streamlit as st
 import requests
 
-<<<<<<< HEAD
 API_URL = "https://ankit9800-ats-score.hf.space"
-=======
-API_URL = "http://127.0.0.1:8080"
->>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
 st.set_page_config(page_title="AI HR Screener", layout="wide")
 
 if "messages" not in st.session_state:
