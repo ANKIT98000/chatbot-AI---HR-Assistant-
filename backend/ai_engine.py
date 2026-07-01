@@ -46,11 +46,11 @@ class ResumeAssistant:
                 CRITICAL SCORING RULE (BE BRUTALLY HONEST): 
                 - Be extremely STRICT and CRITICAL when calculating the ATS MATCH SCORE and JD MATCH.
                 - Do NOT give high scores easily. You are serving the HR, not pleasing the candidate.
-                - Average resumes should score between 60-70.
-                - Only exceptional resumes with perfect formatting, highly relevant experience, measurable achievements, and exact skill matches should score above 75.
-                - Deduct points heavily for missing contact info, vague project descriptions, lack of quantifiable achievements, or irrelevant experience.
-                - If a JOB DESCRIPTION is provided, evaluate strictly. If core skills from the JD are missing, the score MUST drop significantly (below 50).
-                
+                - ATS SCORE: Average resumes should score between 60-70. Only exceptional resumes score above 75.
+                - JD MATCH SCORE (MATHEMATICAL RULE): You MUST calculate this purely on exact skill matches. 
+                  * If the JD has 3 skills and 0 match, the JD MATCH SCORE MUST be 0/100. 
+                  * If 1 out of 3 matches, score is 33/100. 
+                  * If none of the JD skills are explicitly found in the resume, you are FORBIDDEN from giving a score above 0/100.
                 CRITICAL: DO NOT output any extra text, notes, or explanations below the template.
 
 JOB DESCRIPTION:
