@@ -1,11 +1,13 @@
 import io
+import os
 import logging
 import re
 from typing import List, Tuple, Optional
 from pypdf import PdfReader
 
 from langchain_postgres.vectorstores import PGVector
-from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace, HuggingFaceEndpointEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings  
+from langchain_google_genai import ChatGoogleGenerativeAI        
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -29,13 +31,16 @@ class ResumeAssistant:
         self._init_models()
 
     def _init_models(self):
-        llm = HuggingFaceEndpoint(repo_id="meta-llama/Meta-Llama-3-8B-Instruct", temperature=0.01)
-        self.model = ChatHuggingFace(llm=llm)
+        self.model = ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash",
+            temperature=0.01,
+            google_api_key=os.getenv("GOOGLE_API_KEY") 
+        )
         parser = StrOutputParser()
 
         self.ats_chain = PromptTemplate(
             template=("""
-                    You are an expert HR AI Assistant. Your job is to screen the candidate's Resume. 
+                You are an expert HR AI Assistant. Your job is to screen the candidate's Resume. 
                 The HR professional will only read this for 5-7 seconds. NEVER generate paragraphs. Output strictly in the template below.
                 
                 CRITICAL SCORING RULE (BE BRUTALLY HONEST): 
@@ -116,11 +121,9 @@ Candidate Resume:
             ats_score = score_match.group(1).strip() if score_match else "N/A"
             jd_score = jd_match.group(1).strip() if jd_match else "N/A"
 
-            # Added JD Match Score in header for QA chain to easily reference later
             header = f"\n=== [CANDIDATE NAME: {candidate_name.upper()} | ATS SCORE: {ats_score} | JD MATCH: {jd_score}] ===\n"
             
             chunks = self.text_splitter.split_text(resume_text)
-            
             docs = [Document(page_content=header + chunk, metadata={"name": candidate_name}) for chunk in chunks]
                 
             return raw_ats_info, docs

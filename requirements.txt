@@ -9,3 +9,4 @@ langchain-postgres
 langchain-text-splitters
 psycopg2-binary
 python-dotenv
+langchain-google-genai
