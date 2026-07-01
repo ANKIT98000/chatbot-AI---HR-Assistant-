@@ -8,5 +8,9 @@ langchain-huggingface
 langchain-postgres
 langchain-text-splitters
 psycopg2-binary
+<<<<<<< HEAD
 python-dotenv
 langchain-google-genai
+=======
+python-dotenv
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836

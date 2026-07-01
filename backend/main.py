@@ -2,10 +2,17 @@ import logging
 import zipfile
 import io
 from typing import List
+<<<<<<< HEAD
 
 from fastapi import FastAPI, UploadFile, File, Form
 from backend.models import QuestionRequest, AssistantResponse, UploadResponse
 from backend.ai_engine import ResumeAssistant
+=======
+# Form import karna zaroori hai
+from fastapi import FastAPI, UploadFile, File, Form
+from models import QuestionRequest, AssistantResponse, UploadResponse
+from ai_engine import ResumeAssistant
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
 
 logging.basicConfig(level=logging.INFO)
 

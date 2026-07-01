@@ -1,19 +1,30 @@
 import io
+<<<<<<< HEAD
 import os
+=======
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
 import logging
 import re
 from typing import List, Tuple, Optional
 from pypdf import PdfReader
 
 from langchain_postgres.vectorstores import PGVector
+<<<<<<< HEAD
 from langchain_huggingface import HuggingFaceEndpointEmbeddings  
 from langchain_google_genai import ChatGoogleGenerativeAI        
+=======
+from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace, HuggingFaceEndpointEmbeddings
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
+<<<<<<< HEAD
 from backend.config import DATABASE_URL
+=======
+from config import DATABASE_URL
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
 
 logger = logging.getLogger(__name__)
 
@@ -31,16 +42,25 @@ class ResumeAssistant:
         self._init_models()
 
     def _init_models(self):
+<<<<<<< HEAD
         self.model = ChatGoogleGenerativeAI(
             model="gemini-1.5-flash",
             temperature=0.01,
             google_api_key=os.getenv("GOOGLE_API_KEY") 
         )
+=======
+        llm = HuggingFaceEndpoint(repo_id="meta-llama/Meta-Llama-3-8B-Instruct", temperature=0.01)
+        self.model = ChatHuggingFace(llm=llm)
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
         parser = StrOutputParser()
 
         self.ats_chain = PromptTemplate(
             template=("""
+<<<<<<< HEAD
                 You are an expert HR AI Assistant. Your job is to screen the candidate's Resume. 
+=======
+                    You are an expert HR AI Assistant. Your job is to screen the candidate's Resume. 
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
                 The HR professional will only read this for 5-7 seconds. NEVER generate paragraphs. Output strictly in the template below.
                 
                 CRITICAL SCORING RULE (BE BRUTALLY HONEST): 
@@ -121,9 +141,17 @@ Candidate Resume:
             ats_score = score_match.group(1).strip() if score_match else "N/A"
             jd_score = jd_match.group(1).strip() if jd_match else "N/A"
 
+<<<<<<< HEAD
             header = f"\n=== [CANDIDATE NAME: {candidate_name.upper()} | ATS SCORE: {ats_score} | JD MATCH: {jd_score}] ===\n"
             
             chunks = self.text_splitter.split_text(resume_text)
+=======
+            # Added JD Match Score in header for QA chain to easily reference later
+            header = f"\n=== [CANDIDATE NAME: {candidate_name.upper()} | ATS SCORE: {ats_score} | JD MATCH: {jd_score}] ===\n"
+            
+            chunks = self.text_splitter.split_text(resume_text)
+            
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
             docs = [Document(page_content=header + chunk, metadata={"name": candidate_name}) for chunk in chunks]
                 
             return raw_ats_info, docs

@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 database/vectordb/chroma.sqlite3
 __pycache__/
 *.pyc
 .env
 .DS_Store
+=======
+.env
+__pycache__/
+venv/
+.venv/
+env/
+>>>>>>> 18b3d78015e56b5fc8ff63da2111fa6d3d730836
